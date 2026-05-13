@@ -9,11 +9,11 @@ import java.util.UUID;
 
 public interface ProjectRepository extends JpaRepository<Project, UUID> {
 
-    List<Project> findByOwnerId(UUID ownerId);
+    List<Project> findByOwner_Id(UUID ownerId);
 
-    List<Project> findByVisibility(ProjectVisibility visibility);
+    List<Project> findByProjectVisibility(ProjectVisibility projectVisibility);
 
-    List<Project> findByCategoryId(UUID categoryId);
+    List<Project> findByCategory_Id(UUID categoryId);
 
     List<Project> findByTitleContainingIgnoreCase(String title);
 

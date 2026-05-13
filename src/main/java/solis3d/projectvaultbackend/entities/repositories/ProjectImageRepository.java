@@ -8,10 +8,10 @@ import java.util.UUID;
 
 public interface ProjectImageRepository extends JpaRepository<ProjectSoftware, UUID> {
 
-    List<ProjectSoftware> findByProjectId(UUID projectId);
+    List<ProjectSoftware> findByProject_Id(UUID projectId);
 
-    boolean existsByProjectIdAndSoftwareId(UUID projectId, UUID softwareId);
+    boolean existsByProject_IdAndSoftware_Id(UUID projectId, UUID softwareId);
 
-    void deleteByProjectIdAndSoftwareId(UUID projectId, UUID softwareId);
+    void deleteByProject_IdAndSoftware_Id(UUID projectId, UUID softwareId);
 
 }
