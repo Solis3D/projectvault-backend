@@ -1,4 +1,4 @@
-package solis3d.projectvaultbackend.entities.repositories;
+package solis3d.projectvaultbackend.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import solis3d.projectvaultbackend.entities.Project;

@@ -4,7 +4,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import solis3d.projectvaultbackend.entities.AppUser;
 import solis3d.projectvaultbackend.entities.Role;
-import solis3d.projectvaultbackend.entities.repositories.AppUserRepository;
+import solis3d.projectvaultbackend.repositories.AppUserRepository;
 import solis3d.projectvaultbackend.exceptions.BadRequestException;
 import solis3d.projectvaultbackend.exceptions.NotFoundException;
 import solis3d.projectvaultbackend.payloads.RegisterDTO;
