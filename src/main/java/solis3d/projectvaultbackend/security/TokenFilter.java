@@ -37,7 +37,9 @@ public class TokenFilter extends OncePerRequestFilter {
         String authHeader = request.getHeader("Authorization");
 
         if(authHeader == null || !authHeader.startsWith("Bearer ")) {
-            throw new UnauthorizedException("Token non valido!");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Inserire il token nell'Authorization header nel formato corretto");
+            return;
         }
 
         String accessToken = authHeader.replace("Bearer ", "");
