@@ -34,11 +34,24 @@ public class ProjectService {
         this.softwareService = softwareService;
     }
 
-    public List<ProjectRespDTO> findAllPublic() {
-        return this.projectRepository.findByProjectVisibility(ProjectVisibility.PUBLIC)
-                .stream()
-                .map(this::mapToDTO)
-                .toList();
+    public List<ProjectRespDTO> findAllPublic(String title, UUID categoryId) {
+     List<Project> projects;
+
+     if(title != null && categoryId != null) {
+         projects = this.projectRepository.findByProjectVisibilityAndTitleContainingIgnoreCaseAndCategory_Id(
+                 ProjectVisibility.PUBLIC, title, categoryId
+         );
+     } else if (title != null) {
+         projects = this.projectRepository.findByProjectVisibilityAndTitleContainingIgnoreCase(ProjectVisibility.PUBLIC, title);
+     } else if (categoryId != null) {
+         projects = this.projectRepository.findByProjectVisibilityAndCategory_Id(ProjectVisibility.PUBLIC, categoryId);
+     } else {
+         projects = this.projectRepository.findByProjectVisibility(ProjectVisibility.PUBLIC);
+     }
+
+     return projects.stream()
+             .map(this::mapToDTO)
+             .toList();
     }
 
     public ProjectRespDTO findPublicById(UUID projectId) {

@@ -26,8 +26,8 @@ public class ProjectController {
     }
 
     @GetMapping
-    public List<ProjectRespDTO> findAllPublic() {
-        return this.projectService.findAllPublic();
+    public List<ProjectRespDTO> findAllPublic(@RequestParam(required = false) String title, @RequestParam(required = false) UUID categoryId) {
+        return this.projectService.findAllPublic(title, categoryId);
     }
 
     @GetMapping("/{projectId}")
