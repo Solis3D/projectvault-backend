@@ -28,6 +28,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/categories/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/softwares").permitAll()
                         .requestMatchers(HttpMethod.GET, "/softwares/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/projects").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/projects/**").permitAll()
 
                         .requestMatchers(HttpMethod.POST, "/categories").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/categories/**").hasRole("ADMIN")

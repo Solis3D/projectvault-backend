@@ -76,6 +76,8 @@ public class TokenFilter extends OncePerRequestFilter {
                                                 || pathMatcher.match("/categories/**", path)
                                                 || pathMatcher.match("/softwares", path)
                                                 || pathMatcher.match("/softwares/**", path)
+                                                || pathMatcher.match("/projects", path)
+                                                || pathMatcher.match("/projects/**", path)
                                 )
                 );
     }

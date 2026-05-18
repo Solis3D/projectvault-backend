@@ -6,10 +6,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import solis3d.projectvaultbackend.entities.AppUser;
 import solis3d.projectvaultbackend.payloads.CurrentUserDTO;
+import solis3d.projectvaultbackend.payloads.ProjectRespDTO;
+import solis3d.projectvaultbackend.services.ProjectService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
 public class UsersController {
+
+    private final ProjectService projectService;
+
+    public UsersController(ProjectService projectService) {
+        this.projectService = projectService;
+    }
 
     @GetMapping("/me")
     public CurrentUserDTO getProfile(Authentication authentication) {
@@ -26,5 +36,12 @@ public class UsersController {
                 currentUser.getPosition(),
                 currentUser.getBio()
         );
+    }
+
+    @GetMapping("/me/projects")
+    public List<ProjectRespDTO> findMyProjects(Authentication authentication) {
+        AppUser currentUser = (AppUser) authentication.getPrincipal();
+
+        return this.projectService.findByOwner(currentUser);
     }
 }
