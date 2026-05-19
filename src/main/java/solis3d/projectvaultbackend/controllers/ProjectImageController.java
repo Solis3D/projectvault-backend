@@ -11,6 +11,8 @@ import solis3d.projectvaultbackend.payloads.NewProjectImageDTO;
 import solis3d.projectvaultbackend.payloads.ProjectImageRespDTO;
 import solis3d.projectvaultbackend.payloads.UpdateProjectImageDTO;
 import solis3d.projectvaultbackend.services.ProjectImageService;
+import org.springframework.web.multipart.MultipartFile;
+import solis3d.projectvaultbackend.entities.ProjectImageType;
 
 import java.util.List;
 import java.util.UUID;
@@ -54,6 +56,27 @@ public class ProjectImageController {
         AppUser currentUser = (AppUser) authentication.getPrincipal();
 
         return this.projectImageService.save(projectId, body, currentUser);
+    }
+
+    @PostMapping("/projects/{projectId}/images/upload")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ProjectImageRespDTO uploadImage(@PathVariable UUID projectId,
+                                           @RequestParam("file") MultipartFile file,
+                                           @RequestParam(required = false) String caption,
+                                           @RequestParam ProjectImageType imageType,
+                                           @RequestParam(required = false) String stageLabel,
+                                           @RequestParam(required = false) Integer sortOrder,
+                                           Authentication authentication) {
+        AppUser currentUser = (AppUser) authentication.getPrincipal();
+        return this.projectImageService.uploadAndSave(
+                projectId,
+                file,
+                caption,
+                imageType,
+                stageLabel,
+                sortOrder,
+                currentUser
+        );
     }
 
     @PutMapping("/project-images/{imageId}")

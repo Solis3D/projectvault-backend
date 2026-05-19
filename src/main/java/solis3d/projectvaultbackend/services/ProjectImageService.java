@@ -11,6 +11,8 @@ import solis3d.projectvaultbackend.payloads.NewProjectImageDTO;
 import solis3d.projectvaultbackend.payloads.ProjectImageRespDTO;
 import solis3d.projectvaultbackend.payloads.UpdateProjectImageDTO;
 import solis3d.projectvaultbackend.repositories.ProjectImageRepository;
+import org.springframework.web.multipart.MultipartFile;
+import solis3d.projectvaultbackend.entities.ProjectImageType;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,10 +22,12 @@ import java.util.UUID;
 public class ProjectImageService {
     private final ProjectImageRepository projectImageRepository;
     private final ProjectService projectService;
+    private final CloudinaryService cloudinaryService;
 
-    public ProjectImageService(ProjectImageRepository projectImageRepository, ProjectService projectService) {
+    public ProjectImageService(ProjectImageRepository projectImageRepository, ProjectService projectService,  CloudinaryService cloudinaryService) {
         this.projectImageRepository = projectImageRepository;
         this.projectService = projectService;
+        this.cloudinaryService = cloudinaryService;
     }
 
     public List<ProjectImageRespDTO> findByPublicProject(UUID projectId){
@@ -72,6 +76,26 @@ public class ProjectImageService {
 
         return this.mapToDTO(projectImageRepository.save(newProjectImage));
 
+    }
+
+    @Transactional
+    public ProjectImageRespDTO uploadAndSave(UUID projectId, MultipartFile file, String caption, ProjectImageType imageType, String stageLabel, Integer sortOrder, AppUser currentUser) {
+        Project project = this.projectService.findById(projectId);
+
+        this.projectService.checkOwnershipOrAdmin(project, currentUser);
+
+        String imageUrl = this.cloudinaryService.uploadImage(file);
+
+        ProjectImage newProjectImage = new ProjectImage();
+        newProjectImage.setImageUrl(imageUrl);
+        newProjectImage.setCaption(caption);
+        newProjectImage.setImageType(imageType);
+        newProjectImage.setStageLabel(stageLabel);
+        newProjectImage.setSortOrder(sortOrder);
+        newProjectImage.setCreatedAt(LocalDateTime.now());
+        newProjectImage.setProject(project);
+
+        return this.mapToDTO(projectImageRepository.save(newProjectImage));
     }
 
     @Transactional
