@@ -156,12 +156,12 @@ public class ProjectService {
         this.projectRepository.delete(foundProject);
     }
 
-    private Project findById(UUID projectId) {
+    public Project findById(UUID projectId) {
         return this.projectRepository.findById(projectId)
                 .orElseThrow(() -> new NotFoundException("Progetto con id " + projectId + " non trovato!"));
     }
 
-    private void checkOwnershipOrAdmin(Project project, AppUser currentUser) {
+    public void checkOwnershipOrAdmin(Project project, AppUser currentUser) {
         boolean isOwner = project.getOwner().getId().equals(currentUser.getId());
         boolean isAdmin = currentUser.getRole() == Role.ADMIN;
 
