@@ -46,4 +46,24 @@ public class CategoryController {
 
         return this.categoryService.save(body);
     }
+
+    @PutMapping("{categoryId}")
+    public Category update(@PathVariable UUID categoryId, @RequestBody @Validated NewCategoryDTO body, BindingResult validationResult) {
+        if(validationResult.hasErrors()){
+            throw new ValidationException(
+                    validationResult.getFieldErrors()
+                            .stream()
+                            .map(fieldError -> fieldError.getDefaultMessage())
+                            .toList()
+            );
+        }
+
+        return this.categoryService.update(categoryId, body);
+    }
+
+    @DeleteMapping("/{categoryId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable UUID categoryId) {
+        this.categoryService.delete(categoryId);
+    }
 }

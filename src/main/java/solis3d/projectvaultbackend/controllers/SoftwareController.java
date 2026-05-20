@@ -45,4 +45,25 @@ public class SoftwareController {
 
         return softwareService.save(body);
     }
+
+    @PutMapping("/{softwareId}")
+    public Software update(@PathVariable UUID softwareId, @RequestBody @Validated NewSoftwareDTO body, BindingResult validationResult) {
+        if (validationResult.hasErrors()) {
+            throw new ValidationException(
+                    validationResult.getFieldErrors()
+                            .stream()
+                            .map(fieldError -> fieldError.getDefaultMessage())
+                            .toList()
+            );
+        }
+
+        return this.softwareService.update(softwareId, body);
+    }
+
+    @DeleteMapping("/{softwareId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable UUID softwareId) {
+        this.softwareService.delete(softwareId);
+    }
+
 }

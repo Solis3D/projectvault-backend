@@ -25,4 +25,5 @@ public interface ProjectRepository extends JpaRepository<Project, UUID> {
 
     long countByProjectVisibility(ProjectVisibility projectVisibility);
 
+    boolean existsByCategory_Id(UUID categoryId);
 }

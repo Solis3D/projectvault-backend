@@ -15,4 +15,6 @@ public interface ProjectSoftwareRepository extends JpaRepository<ProjectSoftware
     void deleteByProject_IdAndSoftware_Id(UUID projectId, UUID softwareId);
 
     void deleteByProject_Id(UUID projectId);
+
+    boolean existsBySoftware_Id(UUID softwareId);
 }

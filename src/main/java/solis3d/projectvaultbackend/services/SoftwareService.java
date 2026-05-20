@@ -1,10 +1,12 @@
 package solis3d.projectvaultbackend.services;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import solis3d.projectvaultbackend.entities.Software;
 import solis3d.projectvaultbackend.exceptions.BadRequestException;
 import solis3d.projectvaultbackend.exceptions.NotFoundException;
 import solis3d.projectvaultbackend.payloads.NewSoftwareDTO;
+import solis3d.projectvaultbackend.repositories.ProjectSoftwareRepository;
 import solis3d.projectvaultbackend.repositories.SoftwareRepository;
 
 import java.text.Normalizer;
@@ -16,9 +18,11 @@ import java.util.UUID;
 public class SoftwareService {
 
     private final SoftwareRepository softwareRepository;
+    private final ProjectSoftwareRepository projectSoftwareRepository;
 
-    public SoftwareService(SoftwareRepository softwareRepository) {
+    public SoftwareService(SoftwareRepository softwareRepository, ProjectSoftwareRepository projectSoftwareRepository) {
         this.softwareRepository = softwareRepository;
+        this.projectSoftwareRepository = projectSoftwareRepository;
     }
 
     public List<Software> findAll() {
@@ -58,5 +62,37 @@ public class SoftwareService {
                 .trim()
                 .replaceAll("[^a-z0-9]+", "-")
                 .replaceAll("^-+|-+$", "");
+    }
+
+    @Transactional
+    public Software update(UUID softwareId, NewSoftwareDTO body) {
+        Software foundSoftware = this.findById(softwareId);
+
+        if(!foundSoftware.getName().equalsIgnoreCase(body.name()) && this.softwareRepository.findByNameIgnoreCase(body.name()).isPresent()) {
+            throw new BadRequestException("Software " +body.name() + " già esistente!");
+        }
+
+        String slug = this.generateSlug(body.name());
+
+        if(!foundSoftware.getName().equals(slug) && this.softwareRepository.existsBySlug(slug)) {
+            throw new BadRequestException("Slug " + slug + " già esistente!");
+        }
+
+        foundSoftware.setName(body.name());
+        foundSoftware.setSlug(slug);
+        foundSoftware.setIconUrl(body.iconUrl());
+
+        return this.softwareRepository.save(foundSoftware);
+    }
+
+    @Transactional
+    public void delete(UUID softwareId) {
+        Software foundSoftware = this.findById(softwareId);
+
+        if(this.projectSoftwareRepository.existsBySoftware_Id(softwareId)) {
+            throw new BadRequestException("Non puoi eliminare un software associato già ad uno o più progetti!");
+        }
+
+        this.softwareRepository.delete(foundSoftware);
     }
 }
