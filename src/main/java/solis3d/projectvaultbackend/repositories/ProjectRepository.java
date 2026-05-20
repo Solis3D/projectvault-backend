@@ -23,4 +23,6 @@ public interface ProjectRepository extends JpaRepository<Project, UUID> {
 
     List<Project> findByProjectVisibilityAndTitleContainingIgnoreCaseAndCategory_Id(ProjectVisibility projectVisibility, String title, UUID categoryId);
 
+    long countByProjectVisibility(ProjectVisibility projectVisibility);
+
 }

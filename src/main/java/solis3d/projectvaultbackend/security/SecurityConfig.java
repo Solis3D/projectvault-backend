@@ -24,6 +24,8 @@ public class SecurityConfig {
 
                         .requestMatchers("/auth/**").permitAll()
 
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+
                         .requestMatchers(HttpMethod.GET, "/categories").permitAll()
                         .requestMatchers(HttpMethod.GET, "/categories/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/softwares").permitAll()

@@ -14,6 +14,7 @@ import solis3d.projectvaultbackend.exceptions.NotFoundException;
 import solis3d.projectvaultbackend.payloads.RegisterDTO;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -58,6 +59,13 @@ public class AppUsersService {
         return this.appUserRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("Utente con email " + email + " non trovato!"));
     }
 
+    public List<CurrentUserDTO> findAll() {
+        return this.appUserRepository.findAll()
+                .stream()
+                .map(this::mapToDTO)
+                .toList();
+    }
+
     @Transactional
     public CurrentUserDTO updateProfile(AppUser currentUser, UpdateUserDTO body) {
         if (body.firstName() != null) {
@@ -100,6 +108,10 @@ public class AppUsersService {
         currentUser.setUpdatedAt(LocalDateTime.now());
 
         return this.mapToDTO(this.appUserRepository.save(currentUser));
+    }
+
+    public long countAll() {
+        return this.appUserRepository.count();
     }
 
     public CurrentUserDTO mapToDTO(AppUser appUser) {

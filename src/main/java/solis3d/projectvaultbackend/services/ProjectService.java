@@ -170,6 +170,38 @@ public class ProjectService {
         }
     }
 
+    public List<ProjectRespDTO> findAllForAdmin() {
+        return this.projectRepository.findAll()
+                .stream()
+                .map(this::mapToDTO)
+                .toList();
+    }
+
+    @Transactional public ProjectRespDTO toggleFeatured(UUID projectId) {
+        Project foundProject = this.findById(projectId);
+
+        foundProject.setFeatured(!foundProject.isFeatured());
+        foundProject.setUpdatedAt(LocalDateTime.now());
+
+        return this.mapToDTO(this.projectRepository.save(foundProject));
+    }
+
+    @Transactional
+    public void deleteForAdmin(UUID projectId) {
+        Project foundProject = this.findById(projectId);
+
+        this.projectSoftwareRepository.deleteByProject_Id(projectId);
+        this.projectRepository.delete(foundProject);
+    }
+
+    public long countAll() {
+        return this.projectRepository.count();
+    }
+
+    public long countByVisibility(ProjectVisibility projectVisibility) {
+        return this.projectRepository.countByProjectVisibility(projectVisibility);
+    }
+
     private void addSoftwaresToProject(Project project, List<UUID> softwareIds) {
         if(softwareIds == null || softwareIds.isEmpty()) {
             return;
