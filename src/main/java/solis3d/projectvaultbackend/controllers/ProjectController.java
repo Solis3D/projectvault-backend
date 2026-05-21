@@ -1,5 +1,9 @@
 package solis3d.projectvaultbackend.controllers;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
@@ -12,7 +16,6 @@ import solis3d.projectvaultbackend.payloads.ProjectRespDTO;
 import solis3d.projectvaultbackend.payloads.UpdateProjectDTO;
 import solis3d.projectvaultbackend.services.ProjectService;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -26,8 +29,13 @@ public class ProjectController {
     }
 
     @GetMapping
-    public List<ProjectRespDTO> findAllPublic(@RequestParam(required = false) String title, @RequestParam(required = false) UUID categoryId) {
-        return this.projectService.findAllPublic(title, categoryId);
+    public Page<ProjectRespDTO> findAllPublic(@RequestParam(required = false) String title,
+                                              @RequestParam(required = false) UUID categoryId,
+                                              @RequestParam(defaultValue = "0") int page,
+                                              @RequestParam (defaultValue = "12") int size) {
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        return this.projectService.findAllPublic(title, categoryId, pageable);
     }
 
     @GetMapping("/{projectId}")

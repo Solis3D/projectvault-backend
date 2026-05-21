@@ -1,5 +1,7 @@
 package solis3d.projectvaultbackend.services;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 import solis3d.projectvaultbackend.entities.*;
@@ -34,24 +36,26 @@ public class ProjectService {
         this.softwareService = softwareService;
     }
 
-    public List<ProjectRespDTO> findAllPublic(String title, UUID categoryId) {
-     List<Project> projects;
+    public Page<ProjectRespDTO> findAllPublic(String title, UUID categoryId, Pageable pageable) {
+        Page<Project> projects;
 
-     if(title != null && categoryId != null) {
-         projects = this.projectRepository.findByProjectVisibilityAndTitleContainingIgnoreCaseAndCategory_Id(
-                 ProjectVisibility.PUBLIC, title, categoryId
-         );
-     } else if (title != null) {
-         projects = this.projectRepository.findByProjectVisibilityAndTitleContainingIgnoreCase(ProjectVisibility.PUBLIC, title);
-     } else if (categoryId != null) {
-         projects = this.projectRepository.findByProjectVisibilityAndCategory_Id(ProjectVisibility.PUBLIC, categoryId);
-     } else {
-         projects = this.projectRepository.findByProjectVisibility(ProjectVisibility.PUBLIC);
-     }
+        if(title != null && categoryId != null) {
+            projects = this.projectRepository.findByProjectVisibilityAndTitleContainingIgnoreCaseAndCategory_Id(
+                    ProjectVisibility.PUBLIC, title, categoryId, pageable
+            );
+        } else if (title != null) {
+            projects = this.projectRepository.findByProjectVisibilityAndTitleContainingIgnoreCase(
+                    ProjectVisibility.PUBLIC, title, pageable
+            );
+        } else if (categoryId != null) {
+            projects = this.projectRepository.findByProjectVisibilityAndCategory_Id(
+                    ProjectVisibility.PUBLIC, categoryId, pageable
+            );
+        } else {
+            projects = this.projectRepository.findByProjectVisibility(ProjectVisibility.PUBLIC, pageable);
+        }
 
-     return projects.stream()
-             .map(this::mapToDTO)
-             .toList();
+        return projects.map(this::mapToDTO);
     }
 
     public ProjectRespDTO findPublicById(UUID projectId) {
@@ -64,11 +68,9 @@ public class ProjectService {
         return this.mapToDTO(foundProject);
     }
 
-    public List<ProjectRespDTO> findByOwner(AppUser currentUser) {
-        return this.projectRepository.findByOwner_Id(currentUser.getId())
-                .stream()
-                .map(this::mapToDTO)
-                .toList();
+    public Page<ProjectRespDTO> findByOwner(AppUser currentUser, Pageable pageable) {
+        return this.projectRepository.findByOwner_Id(currentUser.getId(), pageable)
+                .map(this::mapToDTO);
     }
 
     @Transactional
@@ -170,11 +172,9 @@ public class ProjectService {
         }
     }
 
-    public List<ProjectRespDTO> findAllForAdmin() {
-        return this.projectRepository.findAll()
-                .stream()
-                .map(this::mapToDTO)
-                .toList();
+    public Page<ProjectRespDTO> findAllForAdmin(Pageable pageable) {
+        return this.projectRepository.findAll(pageable)
+                .map(this::mapToDTO);
     }
 
     @Transactional public ProjectRespDTO toggleFeatured(UUID projectId) {

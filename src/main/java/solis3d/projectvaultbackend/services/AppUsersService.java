@@ -1,5 +1,7 @@
 package solis3d.projectvaultbackend.services;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +16,6 @@ import solis3d.projectvaultbackend.exceptions.NotFoundException;
 import solis3d.projectvaultbackend.payloads.RegisterDTO;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -64,11 +65,9 @@ public class AppUsersService {
         return this.appUserRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("Utente con email " + email + " non trovato!"));
     }
 
-    public List<CurrentUserDTO> findAll() {
-        return this.appUserRepository.findAll()
-                .stream()
-                .map(this::mapToDTO)
-                .toList();
+    public Page<CurrentUserDTO> findAll(Pageable pageable) {
+        return this.appUserRepository.findAll(pageable)
+                .map(this::mapToDTO);
     }
 
     @Transactional

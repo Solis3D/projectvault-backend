@@ -1,5 +1,9 @@
 package solis3d.projectvaultbackend.controllers;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
@@ -13,8 +17,6 @@ import solis3d.projectvaultbackend.payloads.ProjectRespDTO;
 import solis3d.projectvaultbackend.payloads.UpdateUserDTO;
 import solis3d.projectvaultbackend.services.AppUsersService;
 import solis3d.projectvaultbackend.services.ProjectService;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -36,10 +38,15 @@ public class UsersController {
     }
 
     @GetMapping("/me/projects")
-    public List<ProjectRespDTO> findMyProjects(Authentication authentication) {
+    public Page<ProjectRespDTO> findMyProjects(Authentication authentication,
+                                               @RequestParam(defaultValue ="0") int page,
+                                               @RequestParam(defaultValue = "12")int size) {
+
         AppUser currentUser = (AppUser) authentication.getPrincipal();
 
-        return this.projectService.findByOwner(currentUser);
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+
+        return this.projectService.findByOwner(currentUser,pageable);
     }
 
     @PutMapping("/me")

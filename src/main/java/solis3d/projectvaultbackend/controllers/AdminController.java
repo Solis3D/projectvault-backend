@@ -1,5 +1,9 @@
 package solis3d.projectvaultbackend.controllers;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import solis3d.projectvaultbackend.entities.ProjectVisibility;
@@ -9,7 +13,6 @@ import solis3d.projectvaultbackend.payloads.ProjectRespDTO;
 import solis3d.projectvaultbackend.services.AppUsersService;
 import solis3d.projectvaultbackend.services.ProjectService;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -25,13 +28,19 @@ public class AdminController {
     }
 
     @GetMapping("/users")
-    public List<CurrentUserDTO> findAllUsers() {
-        return this.appUsersService.findAll();
+    public Page<CurrentUserDTO> findAllUsers(@RequestParam(defaultValue = "0") int page,
+                                             @RequestParam(defaultValue = "12") int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+
+        return this.appUsersService.findAll(pageable);
     }
 
     @GetMapping("/projects")
-    public List<ProjectRespDTO> findAllProjects() {
-        return this.projectService.findAllForAdmin();
+    public Page<ProjectRespDTO> findAllProjects(@RequestParam(defaultValue = "0") int page,
+                                                @RequestParam(defaultValue = "12") int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+
+        return this.projectService.findAllForAdmin(pageable);
     }
 
     @PatchMapping("/projects/{projectId}/featured")
