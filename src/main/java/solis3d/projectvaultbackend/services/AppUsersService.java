@@ -23,11 +23,13 @@ public class AppUsersService {
     private final AppUserRepository appUserRepository;
     private final PasswordEncoder bcrypt;
     private final CloudinaryService cloudinaryService;
+    private final EmailService emailService;
 
-    public AppUsersService(AppUserRepository appUserRepository, PasswordEncoder bcrypt,  CloudinaryService cloudinaryService) {
+    public AppUsersService(AppUserRepository appUserRepository, PasswordEncoder bcrypt,  CloudinaryService cloudinaryService, EmailService emailService) {
         this.appUserRepository = appUserRepository;
         this.bcrypt = bcrypt;
         this.cloudinaryService = cloudinaryService;
+        this.emailService = emailService;
     }
 
     public AppUser saveNewUser(RegisterDTO body) {
@@ -48,7 +50,10 @@ public class AppUsersService {
         newUser.setRole(Role.USER);
         newUser.setCreatedAt(LocalDateTime.now());
 
-        return this.appUserRepository.save(newUser);
+        AppUser savedUser = appUserRepository.save(newUser);
+        this.emailService.sendWelcomeEmail(savedUser);
+
+        return savedUser;
     }
 
     public AppUser findById(UUID userId) {
