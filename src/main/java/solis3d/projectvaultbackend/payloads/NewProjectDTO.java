@@ -15,8 +15,10 @@ public record NewProjectDTO(
         String title,
 
         @NotBlank (message = "La descrizione del progetto è obbligatoria!")
+        @Size(max = 3000, message = "La descrizione non può superare i 3000 caratteri!")
         String description,
 
+        @Size(max = 3000, message = "Le note tecniche non possono superare i 3000 caratteri!")
         String technicalNotes,
 
         @NotNull(message = "Lo stato del progetto è obbligatorio!")
@@ -32,6 +34,7 @@ public record NewProjectDTO(
         @NotNull (message = "La categoria è obbligatoria!")
         UUID categoryId,
 
+        @Size(max = 20, message = "Non puoi associare più di 20 software a un progetto!")
         List<UUID> softwareIds
 ) {
 }

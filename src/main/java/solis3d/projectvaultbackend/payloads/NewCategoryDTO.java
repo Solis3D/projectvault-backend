@@ -8,6 +8,7 @@ public record NewCategoryDTO(
         @Size(max = 50, message = "Il nome della categoria non può superare i 50 caratteri!")
         String name,
 
+        @Size(max = 300, message = "La descrizione non può superare i 300 caratteri!")
         String description
 ) {
 }
