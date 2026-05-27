@@ -58,6 +58,12 @@ public class ProjectService {
         return projects.map(this::mapToDTO);
     }
 
+    public Page<ProjectRespDTO> findFeaturedPublic(Pageable pageable) {
+        return this.projectRepository
+                .findByProjectVisibilityAndFeaturedTrue(ProjectVisibility.PUBLIC, pageable)
+                .map(this::mapToDTO);
+    }
+
     public ProjectRespDTO findPublicById(UUID projectId) {
         Project foundProject = this.findById(projectId);
 

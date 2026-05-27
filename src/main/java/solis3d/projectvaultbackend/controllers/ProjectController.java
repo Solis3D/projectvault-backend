@@ -38,6 +38,13 @@ public class ProjectController {
         return this.projectService.findAllPublic(title, categoryId, pageable);
     }
 
+    @GetMapping("/featured")
+    public Page<ProjectRespDTO> findFeaturedPublic(@RequestParam(defaultValue = "0") int page,
+                                                   @RequestParam(defaultValue = "3") int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("updatedAt").descending());
+        return this.projectService.findFeaturedPublic(pageable);
+    }
+
     @GetMapping("/{projectId}")
     public ProjectRespDTO findPublicById(@PathVariable UUID projectId) {
         return this.projectService.findPublicById(projectId);
