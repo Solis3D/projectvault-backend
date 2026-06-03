@@ -96,7 +96,7 @@ public class ProjectService {
         newProject.setDescription(body.description());
         newProject.setTechnicalNotes(body.technicalNotes());
         newProject.setProjectStatus(body.projectStatus());
-        newProject.setProjectVisibility(body.projectVisibility());
+        newProject.setProjectVisibility(ProjectVisibility.PRIVATE);
         newProject.setThumbnailUrl(body.thumbnailUrl());
         newProject.setYoutubeUrl(body.youtubeUrl());
 

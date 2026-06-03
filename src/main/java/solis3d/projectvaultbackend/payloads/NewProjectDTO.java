@@ -5,7 +5,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import solis3d.projectvaultbackend.entities.ProjectStatus;
 import solis3d.projectvaultbackend.entities.ProjectViewerType;
-import solis3d.projectvaultbackend.entities.ProjectVisibility;
 
 import java.util.List;
 import java.util.UUID;
@@ -24,9 +23,6 @@ public record NewProjectDTO(
 
         @NotNull(message = "Lo stato del progetto è obbligatorio!")
         ProjectStatus projectStatus,
-
-        @NotNull(message = "La visibilità del progetto è obbligatoria!")
-        ProjectVisibility projectVisibility,
 
         String thumbnailUrl,
 
