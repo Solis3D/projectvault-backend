@@ -18,6 +18,8 @@ import solis3d.projectvaultbackend.payloads.UpdateUserDTO;
 import solis3d.projectvaultbackend.services.AppUsersService;
 import solis3d.projectvaultbackend.services.ProjectService;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/users")
 public class UsersController {
@@ -47,6 +49,14 @@ public class UsersController {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
 
         return this.projectService.findByOwner(currentUser,pageable);
+    }
+
+    @GetMapping("/me/projects/{projectId}")
+    public ProjectRespDTO findMyProjectById(@PathVariable UUID projectId,
+                                            Authentication authentication) {
+        AppUser currentUser = (AppUser) authentication.getPrincipal();
+
+        return this.projectService.findMyProjectById(projectId, currentUser);
     }
 
     @PutMapping("/me")

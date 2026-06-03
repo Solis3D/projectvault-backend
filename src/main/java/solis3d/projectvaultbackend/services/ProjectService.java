@@ -79,6 +79,14 @@ public class ProjectService {
                 .map(this::mapToDTO);
     }
 
+    public ProjectRespDTO findMyProjectById(UUID projectId, AppUser currentUser) {
+        Project foundProject = this.findById(projectId);
+
+        this.checkOwnershipOrAdmin(foundProject, currentUser);
+
+        return this.mapToDTO(foundProject);
+    }
+
     @Transactional
     public ProjectRespDTO save(NewProjectDTO body, AppUser currentUser) {
         Category category = this.categoryService.findById(body.categoryId());
