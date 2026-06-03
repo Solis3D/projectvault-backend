@@ -1,6 +1,7 @@
 package solis3d.projectvaultbackend.payloads;
 
 import solis3d.projectvaultbackend.entities.ProjectStatus;
+import solis3d.projectvaultbackend.entities.ProjectViewerType;
 import solis3d.projectvaultbackend.entities.ProjectVisibility;
 
 import java.time.LocalDateTime;
@@ -15,6 +16,8 @@ public record ProjectRespDTO(
         ProjectStatus projectStatus,
         ProjectVisibility projectVisibility,
         String thumbnailUrl,
+        String youtubeUrl,
+        ProjectViewerType viewerType,
         String modelUrl,
         boolean featured,
         LocalDateTime createdAt,

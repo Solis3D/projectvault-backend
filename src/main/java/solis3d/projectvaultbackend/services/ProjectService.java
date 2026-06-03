@@ -98,7 +98,18 @@ public class ProjectService {
         newProject.setProjectStatus(body.projectStatus());
         newProject.setProjectVisibility(body.projectVisibility());
         newProject.setThumbnailUrl(body.thumbnailUrl());
-        newProject.setModelUrl(body.modelUrl());
+        newProject.setYoutubeUrl(body.youtubeUrl());
+
+        ProjectViewerType viewerType = body.viewerType() != null
+                ? body.viewerType()
+                : ProjectViewerType.NONE;
+
+        newProject.setViewerType(viewerType);
+
+        if(viewerType != ProjectViewerType.NONE) {
+            newProject.setModelUrl(body.modelUrl());
+        }
+
         newProject.setFeatured(false);
         newProject.setCreatedAt(LocalDateTime.now());
         newProject.setOwner(currentUser);
@@ -138,11 +149,29 @@ public class ProjectService {
         }
 
         if(body.thumbnailUrl() != null) {
-            foundProject.setThumbnailUrl(body.thumbnailUrl());
+            foundProject.setThumbnailUrl(
+                    body.thumbnailUrl().isBlank() ? null : body.thumbnailUrl()
+            );
+        }
+
+        if(body.youtubeUrl() != null) {
+            foundProject.setYoutubeUrl(
+                    body.youtubeUrl().isBlank() ? null : body.youtubeUrl()
+            );
+        }
+
+        if(body.viewerType() != null) {
+            foundProject.setViewerType(body.viewerType());
         }
 
         if(body.modelUrl() != null) {
-            foundProject.setModelUrl(body.modelUrl());
+            foundProject.setModelUrl(
+                    body.modelUrl().isBlank() ? null : body.modelUrl()
+            );
+        }
+
+        if(foundProject.getViewerType() == ProjectViewerType.NONE) {
+            foundProject.setModelUrl(null);
         }
 
         if(body.categoryId() != null) {
@@ -256,6 +285,10 @@ public class ProjectService {
                 project.getProjectStatus(),
                 project.getProjectVisibility(),
                 project.getThumbnailUrl(),
+                project.getYoutubeUrl(),
+                project.getViewerType() != null
+                        ? project.getViewerType()
+                        : ProjectViewerType.NONE,
                 project.getModelUrl(),
                 project.isFeatured(),
                 project.getCreatedAt(),

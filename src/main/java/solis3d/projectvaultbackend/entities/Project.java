@@ -41,6 +41,13 @@ public class Project {
     @Column(name = "thumbnail_url", columnDefinition = "TEXT")
     private String thumbnailUrl;
 
+    @Column(name = "youtube_url", columnDefinition = "TEXT")
+    private String youtubeUrl;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "viewer_type")
+    private ProjectViewerType viewerType;
+
     @Column(name = "model_url", columnDefinition = "TEXT")
     private String modelUrl;
 

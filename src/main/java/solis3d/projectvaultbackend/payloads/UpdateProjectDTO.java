@@ -2,6 +2,7 @@ package solis3d.projectvaultbackend.payloads;
 
 import jakarta.validation.constraints.Size;
 import solis3d.projectvaultbackend.entities.ProjectStatus;
+import solis3d.projectvaultbackend.entities.ProjectViewerType;
 import solis3d.projectvaultbackend.entities.ProjectVisibility;
 
 import java.util.List;
@@ -20,6 +21,10 @@ public record UpdateProjectDTO(
         ProjectVisibility projectVisibility,
 
         String thumbnailUrl,
+
+        String youtubeUrl,
+
+        ProjectViewerType viewerType,
 
         String modelUrl,
 

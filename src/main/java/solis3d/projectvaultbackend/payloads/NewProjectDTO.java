@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import solis3d.projectvaultbackend.entities.ProjectStatus;
+import solis3d.projectvaultbackend.entities.ProjectViewerType;
 import solis3d.projectvaultbackend.entities.ProjectVisibility;
 
 import java.util.List;
@@ -28,6 +29,10 @@ public record NewProjectDTO(
         ProjectVisibility projectVisibility,
 
         String thumbnailUrl,
+
+        String youtubeUrl,
+
+        ProjectViewerType viewerType,
 
         String modelUrl,
 
