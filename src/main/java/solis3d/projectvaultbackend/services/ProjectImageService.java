@@ -7,6 +7,7 @@ import solis3d.projectvaultbackend.entities.Project;
 import solis3d.projectvaultbackend.entities.ProjectImage;
 import solis3d.projectvaultbackend.entities.ProjectVisibility;
 import solis3d.projectvaultbackend.exceptions.NotFoundException;
+import solis3d.projectvaultbackend.payloads.CloudinaryUploadRespDTO;
 import solis3d.projectvaultbackend.payloads.NewProjectImageDTO;
 import solis3d.projectvaultbackend.payloads.ProjectImageRespDTO;
 import solis3d.projectvaultbackend.payloads.UpdateProjectImageDTO;
@@ -84,10 +85,11 @@ public class ProjectImageService {
 
         this.projectService.checkOwnershipOrAdmin(project, currentUser);
 
-        String imageUrl = this.cloudinaryService.uploadImage(file);
+        CloudinaryUploadRespDTO uploadedImage = this.cloudinaryService.uploadImage(file);
 
         ProjectImage newProjectImage = new ProjectImage();
-        newProjectImage.setImageUrl(imageUrl);
+        newProjectImage.setImageUrl(uploadedImage.imageUrl());
+        newProjectImage.setCloudinaryPublicId(uploadedImage.publicId());
         newProjectImage.setCaption(caption);
         newProjectImage.setImageType(imageType);
         newProjectImage.setStageLabel(stageLabel);
@@ -106,6 +108,7 @@ public class ProjectImageService {
 
         if(body.imageUrl() != null) {
             foundImage.setImageUrl(body.imageUrl());
+            foundImage.setCloudinaryPublicId(null);
         }
 
         if(body.caption() != null) {
@@ -135,7 +138,16 @@ public class ProjectImageService {
 
         this.projectService.checkOwnershipOrAdmin(foundImage.getProject(), currentUser);
 
+        this.deleteCloudinaryImage(foundImage);
         this.projectImageRepository.delete(foundImage);
+    }
+
+    private void deleteCloudinaryImage(ProjectImage projectImage) {
+        if(projectImage.getCloudinaryPublicId() != null) {
+            this.cloudinaryService.deleteImage(projectImage.getCloudinaryPublicId());
+        } else {
+            this.cloudinaryService.deleteImageByUrl(projectImage.getImageUrl());
+        }
     }
 
     private ProjectImageRespDTO mapToDTO(ProjectImage projectImage) {

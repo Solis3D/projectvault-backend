@@ -11,6 +11,7 @@ import solis3d.projectvaultbackend.payloads.NewProjectDTO;
 import solis3d.projectvaultbackend.payloads.ProjectRespDTO;
 import solis3d.projectvaultbackend.payloads.SoftwareRespDTO;
 import solis3d.projectvaultbackend.payloads.UpdateProjectDTO;
+import solis3d.projectvaultbackend.repositories.ProjectImageRepository;
 import solis3d.projectvaultbackend.repositories.ProjectRepository;
 import solis3d.projectvaultbackend.repositories.ProjectSoftwareRepository;
 
@@ -23,17 +24,23 @@ public class ProjectService {
 
     private final ProjectRepository projectRepository;
     private final ProjectSoftwareRepository projectSoftwareRepository;
+    private final ProjectImageRepository projectImageRepository;
     private final CategoryService categoryService;
     private final SoftwareService softwareService;
+    private final CloudinaryService cloudinaryService;
 
     public ProjectService(ProjectRepository projectRepository,
                           ProjectSoftwareRepository projectSoftwareRepository,
+                          ProjectImageRepository projectImageRepository,
                           CategoryService categoryService,
-                          SoftwareService softwareService) {
+                          SoftwareService softwareService,
+                          CloudinaryService cloudinaryService) {
         this.projectRepository = projectRepository;
         this.projectSoftwareRepository = projectSoftwareRepository;
+        this.projectImageRepository = projectImageRepository;
         this.categoryService = categoryService;
         this.softwareService = softwareService;
+        this.cloudinaryService = cloudinaryService;
     }
 
     public Page<ProjectRespDTO> findAllPublic(String title, UUID categoryId, Pageable pageable) {
@@ -197,6 +204,7 @@ public class ProjectService {
 
         this.checkOwnershipOrAdmin(foundProject, currentUser);
 
+        this.deleteProjectImages(projectId);
         this.projectSoftwareRepository.deleteByProject_Id(projectId);
         this.projectRepository.delete(foundProject);
     }
@@ -233,6 +241,7 @@ public class ProjectService {
     public void deleteForAdmin(UUID projectId) {
         Project foundProject = this.findById(projectId);
 
+        this.deleteProjectImages(projectId);
         this.projectSoftwareRepository.deleteByProject_Id(projectId);
         this.projectRepository.delete(foundProject);
     }
@@ -274,6 +283,20 @@ public class ProjectService {
                         projectSoftware.getSoftware().getIconUrl()
                 ))
                 .toList();
+    }
+
+    private void deleteProjectImages(UUID projectId) {
+        List<ProjectImage> projectImages = this.projectImageRepository.findByProject_IdOrderBySortOrderAsc(projectId);
+
+        projectImages.forEach(projectImage -> {
+            if(projectImage.getCloudinaryPublicId() != null) {
+                this.cloudinaryService.deleteImage(projectImage.getCloudinaryPublicId());
+            } else {
+                this.cloudinaryService.deleteImageByUrl(projectImage.getImageUrl());
+            }
+        });
+
+        this.projectImageRepository.deleteByProject_Id(projectId);
     }
 
     private ProjectRespDTO mapToDTO(Project project) {

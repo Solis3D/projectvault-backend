@@ -24,6 +24,9 @@ public class ProjectImage {
     @Column(name = "image_url", nullable = false, columnDefinition = "TEXT")
     private String imageUrl;
 
+    @Column(name = "cloudinary_public_id")
+    private String cloudinaryPublicId;
+
     @Column(columnDefinition = "TEXT")
     private String caption;
 

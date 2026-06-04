@@ -43,6 +43,9 @@ public class AppUser {
     @Column(name = "avatar_url", columnDefinition = "TEXT")
     private String avatarUrl;
 
+    @Column(name = "avatar_public_id")
+    private String avatarPublicId;
+
     @Column(length = 150)
     private String position;
 

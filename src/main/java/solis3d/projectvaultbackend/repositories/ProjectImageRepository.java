@@ -12,4 +12,6 @@ public interface ProjectImageRepository extends JpaRepository<ProjectImage, UUID
 
     List<ProjectImage> findByProject_IdAndImageTypeOrderBySortOrderAsc(UUID projectId, ProjectImageType imageType);
 
+    void deleteByProject_Id(UUID projectId);
+
 }

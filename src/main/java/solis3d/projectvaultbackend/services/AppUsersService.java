@@ -13,6 +13,7 @@ import solis3d.projectvaultbackend.payloads.UpdateUserDTO;
 import solis3d.projectvaultbackend.repositories.AppUserRepository;
 import solis3d.projectvaultbackend.exceptions.BadRequestException;
 import solis3d.projectvaultbackend.exceptions.NotFoundException;
+import solis3d.projectvaultbackend.payloads.CloudinaryUploadRespDTO;
 import solis3d.projectvaultbackend.payloads.RegisterDTO;
 
 import java.time.LocalDateTime;
@@ -106,9 +107,16 @@ public class AppUsersService {
 
     @Transactional
     public CurrentUserDTO uploadAvatar(AppUser currentUser, MultipartFile file) {
-        String avatarUrl = this.cloudinaryService.uploadImage(file);
+        CloudinaryUploadRespDTO uploadedAvatar = this.cloudinaryService.uploadImage(file);
 
-        currentUser.setAvatarUrl(avatarUrl);
+        if(currentUser.getAvatarPublicId() != null) {
+            this.cloudinaryService.deleteImage(currentUser.getAvatarPublicId());
+        } else {
+            this.cloudinaryService.deleteImageByUrl(currentUser.getAvatarUrl());
+        }
+
+        currentUser.setAvatarUrl(uploadedAvatar.imageUrl());
+        currentUser.setAvatarPublicId(uploadedAvatar.publicId());
         currentUser.setUpdatedAt(LocalDateTime.now());
 
         return this.mapToDTO(this.appUserRepository.save(currentUser));
