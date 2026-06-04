@@ -74,7 +74,7 @@ public class SoftwareService {
 
         String slug = this.generateSlug(body.name());
 
-        if(!foundSoftware.getName().equals(slug) && this.softwareRepository.existsBySlug(slug)) {
+        if(!slug.equals(foundSoftware.getSlug()) && this.softwareRepository.existsBySlug(slug)) {
             throw new BadRequestException("Slug " + slug + " già esistente!");
         }
 
