@@ -17,6 +17,9 @@ public class EmailService {
 
     private final JavaMailSender javaMailSender;
 
+    @Value("${mail.enabled}")
+    private boolean mailEnabled;
+
     @Value("${frontend.url}")
     private String frontendUrl;
 
@@ -28,6 +31,12 @@ public class EmailService {
     }
 
     public void sendWelcomeEmail(AppUser appUser) {
+
+        if(!this.mailEnabled) {
+            logger.info("Welcome email disabilitata. Skip email per {}", appUser.getEmail());
+            return;
+        }
+
         try {
             MimeMessage message = this.javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
