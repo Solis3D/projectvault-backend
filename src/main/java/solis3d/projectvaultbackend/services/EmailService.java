@@ -20,6 +20,9 @@ public class EmailService {
     @Value("${frontend.url}")
     private String frontendUrl;
 
+    @Value("${spring.mail.username}")
+    private String mailFrom;
+
     public EmailService(JavaMailSender javaMailSender) {
         this.javaMailSender = javaMailSender;
     }
@@ -30,7 +33,9 @@ public class EmailService {
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
             helper.setTo(appUser.getEmail());
+            helper.setFrom(this.mailFrom);
             helper.setSubject("Welcome to ProjectVault!");
+
 
             String htmlContent = """
                 <!DOCTYPE html>
@@ -55,7 +60,7 @@ public class EmailService {
                                             </p>
 
                                             <h2 style="margin:0 0 18px; color:#e5e2e1; font-size:24px;">
-                                                Welcome, %s!
+                                                Welcome, {{firstName}}!
                                             </h2>
 
                                             <p style="margin:0 0 16px; color:#b9cbc1; font-size:16px; line-height:1.6;">
@@ -68,7 +73,7 @@ public class EmailService {
                                             </p>
 
                                             <div style="margin:28px 0;">
-                                            <a href="%s/portfolio" style="display:inline-block; background-color:#00ffc2; color:#002116; text-decoration:none; padding:14px 22px; font-weight:bold;">
+                                            <a href="{{frontendUrl}}/portfolio" style="display:inline-block; background-color:#00ffc2; color:#002116; text-decoration:none; padding:14px 22px; font-weight:bold;">
                                                     Start building your portfolio
                                                 </a>
                                             </div>
@@ -92,7 +97,10 @@ public class EmailService {
                     </table>
                 </body>
                 </html>
-                """.formatted(appUser.getFirstName(), this.frontendUrl);
+                """;
+            htmlContent = htmlContent
+                    .replace("{{firstName}}", appUser.getFirstName())
+                    .replace("{{frontendUrl}}", this.frontendUrl);
 
             helper.setText(htmlContent, true);
 
