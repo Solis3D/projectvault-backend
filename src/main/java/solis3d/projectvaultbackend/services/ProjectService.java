@@ -86,6 +86,18 @@ public class ProjectService {
                 .map(this::mapToDTO);
     }
 
+    public Page<ProjectRespDTO> findPublicByOwner(
+            AppUser owner,Pageable pageable
+    ) {
+        return this.projectRepository
+                .findByOwner_IdAndProjectVisibility(
+                        owner.getId(),
+                        ProjectVisibility.PUBLIC,
+                        pageable
+                )
+                .map(this::mapToDTO);
+    }
+
     public ProjectRespDTO findMyProjectById(UUID projectId, AppUser currentUser) {
         Project foundProject = this.findById(projectId);
 

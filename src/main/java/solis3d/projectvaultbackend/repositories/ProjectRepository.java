@@ -27,6 +27,10 @@ public interface ProjectRepository extends JpaRepository<Project, UUID> {
 
     Page<Project> findByProjectVisibilityAndTitleContainingIgnoreCaseAndCategory_Id(ProjectVisibility projectVisibility, String title, UUID categoryId, Pageable pageable);
 
+    Page<Project> findByOwner_IdAndProjectVisibility(
+            UUID ownerId, ProjectVisibility projectVisibility, Pageable pageable
+    );
+
     long countByProjectVisibility(ProjectVisibility projectVisibility);
 
     boolean existsByCategory_Id(UUID categoryId);

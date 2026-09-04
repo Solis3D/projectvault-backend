@@ -15,6 +15,7 @@ import solis3d.projectvaultbackend.exceptions.BadRequestException;
 import solis3d.projectvaultbackend.exceptions.NotFoundException;
 import solis3d.projectvaultbackend.payloads.CloudinaryUploadRespDTO;
 import solis3d.projectvaultbackend.payloads.RegisterDTO;
+import solis3d.projectvaultbackend.payloads.PublicArtistDTO;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -64,6 +65,17 @@ public class AppUsersService {
 
     public AppUser findByEmail(String email) {
         return this.appUserRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("Utente con email " + email + " non trovato!"));
+    }
+
+    public AppUser findByUsername(String username) {
+        return this.appUserRepository.findByUsername(username)
+                .orElseThrow(() ->
+                        new NotFoundException("Utente con username " + username + " non trovato!"));
+    }
+
+    public PublicArtistDTO findPublicByUsername(String username) {
+        AppUser appUser = this.findByUsername(username);
+        return this.mapToPublicDTO(appUser);
     }
 
     public Page<CurrentUserDTO> findAll(Pageable pageable) {
@@ -134,6 +146,18 @@ public class AppUsersService {
                 appUser.getUsername(),
                 appUser.getEmail(),
                 appUser.getRole(),
+                appUser.getAvatarUrl(),
+                appUser.getPosition(),
+                appUser.getBio()
+        );
+    }
+
+    public PublicArtistDTO mapToPublicDTO(AppUser appUser) {
+        return new PublicArtistDTO(
+                appUser.getId(),
+                appUser.getFirstName(),
+                appUser.getLastName(),
+                appUser.getUsername(),
                 appUser.getAvatarUrl(),
                 appUser.getPosition(),
                 appUser.getBio()
