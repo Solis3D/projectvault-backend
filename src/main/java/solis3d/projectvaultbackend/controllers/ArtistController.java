@@ -49,4 +49,22 @@ public class ArtistController {
 
         return this.projectService.findPublicByOwner(artist, pageable);
     }
+
+    @GetMapping
+    public Page<PublicArtistDTO> searchArtists(
+            @RequestParam(defaultValue = "") String query,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "12") int size
+    ) {
+        Pageable pageable = PageRequest.of(
+                page,
+                size,
+                Sort.by("username").ascending()
+        );
+
+        return this.appUsersService.searchPublicArtists(
+                query,
+                pageable
+        );
+    }
 }

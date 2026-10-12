@@ -41,7 +41,11 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/softwares/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/projects").permitAll()
                         .requestMatchers(HttpMethod.GET, "/projects/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/artists/**").permitAll()
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/artists",
+                                "/artists/**"
+                        ).permitAll()
 
                         .requestMatchers(HttpMethod.POST, "/categories").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/categories/**").hasRole("ADMIN")

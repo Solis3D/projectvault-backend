@@ -16,6 +16,7 @@ import solis3d.projectvaultbackend.exceptions.NotFoundException;
 import solis3d.projectvaultbackend.payloads.CloudinaryUploadRespDTO;
 import solis3d.projectvaultbackend.payloads.RegisterDTO;
 import solis3d.projectvaultbackend.payloads.PublicArtistDTO;
+import solis3d.projectvaultbackend.entities.ProjectVisibility;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -76,6 +77,22 @@ public class AppUsersService {
     public PublicArtistDTO findPublicByUsername(String username) {
         AppUser appUser = this.findByUsername(username);
         return this.mapToPublicDTO(appUser);
+    }
+
+    public Page<PublicArtistDTO> searchPublicArtists(
+            String query,
+            Pageable pageable
+    ) {
+        String normalizedQuery = query == null
+                ? ""
+                : query.trim();
+
+        return this.appUserRepository.searchPublicArtists(
+                normalizedQuery,
+                Role.USER,
+                ProjectVisibility.PUBLIC,
+                pageable
+        ).map(this::mapToPublicDTO);
     }
 
     public Page<CurrentUserDTO> findAll(Pageable pageable) {
